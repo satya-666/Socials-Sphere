@@ -73,7 +73,6 @@ const News = () => {
                         ))}
                         
                         {/* <a href="#" className='nav-link'>World</a>
-                        <a href="#" className='nav-link'>Business</a>
                         <a href="#" className='nav-link'>Technology</a>
                         <a href="#" className='nav-link'>Entertaiment</a>
                         <a href="#" className='nav-link'>Sports</a>
