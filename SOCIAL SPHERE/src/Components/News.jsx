@@ -45,6 +45,8 @@ const News = () => {
   const [headline, setheadline] = useState(null);
   const [news, setnews] = useState([]);
   const [selectedCategory, setselectedCategory] = useState('general');
+  const [searchInput, setsearchInput] = useState('');
+  const [searchQuery, setsearchQuery] = useState('');
 
   useEffect(() => {
     const fetchNews = async () => {
