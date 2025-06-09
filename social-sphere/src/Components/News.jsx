@@ -2,9 +2,12 @@ import React, { useState, useEffect } from 'react';
 import Weather from './Weather';
 import Clander from './Clander';
 import './News.css';
+import './NewsModal.css';
 import userImg from '../assets/Images/userImg.png';
 import noImg from '../assets/Images/noImg.png';
 import axios from 'axios';
+import NewsModal from './NewsModal';
+import Bookmarks from './Bookmarks';
 
 const API_KEY = 'cf67774cafc54591939708d2a2ae9885';
 
@@ -25,6 +28,11 @@ const News = () => {
   const [selectedCategory, setSelectedCategory] = useState('general');
   const [searchInput, setSearchInput] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
+  const[showModal, setShowModal] = useState(false);
+  const[selectedArticle, setSelectedArticle] = useState(null);
+  const [bookmarks, setBookmarks] = useState([]);
+  const [showBookmarks, setShowBookmarks] = useState(false);
+
 
   useEffect(() => {
     const fetchNews = async () => {
@@ -72,6 +80,14 @@ const News = () => {
     setSearchQuery(searchInput);
   };
 
+  const handleArticleClick = (article) => {
+    setSelectedArticle(article);
+    setShowModal(true);
+
+    console.log(article)
+  }
+
+  
   return (
     <div className='news'>
       <header className='news-header'>
@@ -117,7 +133,7 @@ const News = () => {
 
         <div className="news-section">
           {headline && (
-            <div className="headline">
+            <div className="headline" onClick={() => handleArticleClick(headline)}>,
               <img src={headline.urlToImage} alt={headline.title} />
               <h2 className="headline-title">{headline.title}
                 <i className="fa-regular fa-bookmark bookmark"></i>
@@ -127,14 +143,15 @@ const News = () => {
 
           <div className="news-grid">
             {news.map((article, index) => (
-              <div key={index} className="news-grid-item">
+              <div key={index} className="news-grid-item" onClick={() => handleArticleClick(article)}>
                 <img src={article.urlToImage} alt={article.title} />
                 <h3>{article.title}<i className="fa-regular fa-bookmark bookmark"></i></h3>
               </div>
             ))}
           </div>
         </div>
-
+        <NewsModal show = {showModal} article = {selectedArticle} onClose={() => setShowModal(false)} />
+          <Bookmarks />
         <div className="my-blogs">My Blog</div>
         <div className="weather-clander">
           <Weather />
