@@ -219,7 +219,12 @@ const News = () => {
         </div>
       </div>
 
-      <footer className='news-footer'>Footer</footer>
+      <footer className='news-footer'>
+        <p>
+          <span>Social Sphere</span>
+        </p>
+        <p>&copy; All Right Reserved. By Satya</p>
+      </footer>
     </div>
   );
 };
