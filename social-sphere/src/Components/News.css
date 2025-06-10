@@ -224,6 +224,20 @@
     height: 5rem;
     background-color: #111214;
     border-radius: 0 0 1rem 1rem ;
-
-
 }
+
+.bookmark-icon {
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
+    font-size: 2rem;
+    color: #ddd;
+    cursor: pointer;
+    z-index: 2;
+    transition: transform 0.2s ease;
+  }
+  
+  .bookmark-icon:hover {
+    transform: scale(1.2);
+  }
+  

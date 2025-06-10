@@ -13,7 +13,7 @@ const API_KEY = 'cf67774cafc54591939708d2a2ae9885';
 
 const categories = [
   'general',
-  'world', // NOTE: 'world' is not a valid category in NewsAPI; you can replace it with a custom domain query if needed.
+  'world', // 'world' is handled via a custom domain query
   'business',
   'technology',
   'entertainment',
@@ -28,12 +28,18 @@ const News = () => {
   const [selectedCategory, setSelectedCategory] = useState('general');
   const [searchInput, setSearchInput] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
-  const[showModal, setShowModal] = useState(false);
-  const[selectedArticle, setSelectedArticle] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedArticle, setSelectedArticle] = useState(null);
   const [bookmarks, setBookmarks] = useState([]);
   const [showBookmarks, setShowBookmarks] = useState(false);
 
+  // Load bookmarks from localStorage on mount
+  useEffect(() => {
+    const savedBookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
+    setBookmarks(savedBookmarks);
+  }, []);
 
+  // Fetch news whenever category or search query changes
   useEffect(() => {
     const fetchNews = async () => {
       let url = `https://newsapi.org/v2/top-headlines?country=us&apiKey=${API_KEY}`;
@@ -46,7 +52,6 @@ const News = () => {
         url += `&q=${encodeURIComponent(searchQuery)}`;
       }
 
-      // Handle custom category like "world" with specific domain
       if (selectedCategory === 'world') {
         url = `https://newsapi.org/v2/everything?domains=wsj.com&apiKey=${API_KEY}`;
         if (searchQuery) url += `&q=${encodeURIComponent(searchQuery)}`;
@@ -72,7 +77,7 @@ const News = () => {
   const handleCategoryChange = (e, category) => {
     e.preventDefault();
     setSelectedCategory(category);
-    setSearchQuery(''); // Reset search when category changes
+    setSearchQuery('');
   };
 
   const handleSearchSubmit = (e) => {
@@ -83,11 +88,24 @@ const News = () => {
   const handleArticleClick = (article) => {
     setSelectedArticle(article);
     setShowModal(true);
+  };
 
-    console.log(article)
-  }
+  const handleBookmarkClick = (article) => {
+    setBookmarks(prevBookmarks => {
+      let updatedBookmarks;
+      const alreadyBookmarked = prevBookmarks.find((b) => b.title === article.title);
 
-  
+      if (alreadyBookmarked) {
+        updatedBookmarks = prevBookmarks.filter((b) => b.title !== article.title);
+      } else {
+        updatedBookmarks = [...prevBookmarks, article];
+      }
+
+      localStorage.setItem('bookmarks', JSON.stringify(updatedBookmarks));
+      return updatedBookmarks;
+    });
+  };
+
   return (
     <div className='news'>
       <header className='news-header'>
@@ -126,32 +144,74 @@ const News = () => {
                   {category}
                 </a>
               ))}
-              <a href="#" className='nav-link'>Bookmarks <i className="fa-regular fa-bookmark"></i></a>
+              <a href="#" className='nav-link' onClick={() => setShowBookmarks(true)}>
+                Bookmarks <i className="fa-solid fa-bookmark"></i>
+              </a>
             </div>
           </nav>
         </div>
 
         <div className="news-section">
           {headline && (
-            <div className="headline" onClick={() => handleArticleClick(headline)}>,
+            <div className="headline" onClick={() => handleArticleClick(headline)}>
               <img src={headline.urlToImage} alt={headline.title} />
-              <h2 className="headline-title">{headline.title}
-                <i className="fa-regular fa-bookmark bookmark"></i>
+              <h2 className="headline-title">
+                {headline.title}
+                <i
+                  className={`fa-bookmark bookmark-icon ${
+                    bookmarks.some((bookmark) => bookmark.title === headline.title)
+                      ? 'fa-solid'
+                      : 'fa-regular'
+                  }`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleBookmarkClick(headline);
+                  }}
+                ></i>
               </h2>
             </div>
           )}
 
           <div className="news-grid">
             {news.map((article, index) => (
-              <div key={index} className="news-grid-item" onClick={() => handleArticleClick(article)}>
+              <div
+                key={index}
+                className="news-grid-item"
+                onClick={() => handleArticleClick(article)}
+              >
                 <img src={article.urlToImage} alt={article.title} />
-                <h3>{article.title}<i className="fa-regular fa-bookmark bookmark"></i></h3>
+                <h3>
+                  {article.title}
+                  <i
+                    className={`fa-bookmark bookmark-icon ${
+                      bookmarks.some((bookmark) => bookmark.title === article.title)
+                        ? 'fa-solid'
+                        : 'fa-regular'
+                    }`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleBookmarkClick(article);
+                    }}
+                  ></i>
+                </h3>
               </div>
             ))}
           </div>
         </div>
-        <NewsModal show = {showModal} article = {selectedArticle} onClose={() => setShowModal(false)} />
-          <Bookmarks />
+
+        <NewsModal
+          show={showModal}
+          article={selectedArticle}
+          onClose={() => setShowModal(false)}
+        />
+
+        <Bookmarks
+          show={showBookmarks}
+          bookmarks={bookmarks}
+          onClose={() => setShowBookmarks(false)}
+          onDeleteBookmark={handleBookmarkClick}
+        />
+
         <div className="my-blogs">My Blog</div>
         <div className="weather-clander">
           <Weather />
