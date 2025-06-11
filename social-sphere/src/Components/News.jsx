@@ -5,6 +5,10 @@ import './News.css';
 import './NewsModal.css';
 import userImg from '../assets/Images/userImg.png';
 import noImg from '../assets/Images/noImg.png';
+import blogimg1 from '../assets/Images/blogimg1.jpeg';
+import blogimg2 from '../assets/Images/blogimg2.jpeg';
+import blogimg3 from '../assets/Images/blogimg3.png';
+import blogimg4 from '../assets/Images/blogimg4.webp';
 import axios from 'axios';
 import NewsModal from './NewsModal';
 import Bookmarks from './Bookmarks';
@@ -23,7 +27,7 @@ const categories = [
   'nation'
 ];
 
-const News = ({onShowBlogs}) => {
+const News = ({onShowBlogs, blogs}) => {
   const [headline, setHeadline] = useState(null);
   const [news, setNews] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('general');
@@ -213,7 +217,27 @@ const News = ({onShowBlogs}) => {
           onDeleteBookmark={handleBookmarkClick}
         />
 
-        <div className="my-blogs">My Blog</div>
+        <div className="my-blogs">
+          <h1 className="my-blogs-heading">My Blogs</h1>
+          <div className="blog-posts">
+            {blogs.map((blog, index) => (
+              <div className="blog-post" key={index}>
+                <img src={blog.image || noImg} alt={blog.title} />
+                <h3>{blog.title}</h3>
+                {/* <p>{blog.content}</p> */}
+                <div className="post-button">
+                  <button className="edit-post">
+                    <i className='bx bxs-edit'></i>
+                  </button>
+                  <button className="delete-post">
+                    <i className='bx bxs-x-circle'></i>
+                  </button>
+                </div>
+              </div>
+            ))}
+            
+          </div>
+        </div>
         <div className="weather-clander">
           <Weather />
           <Clander />

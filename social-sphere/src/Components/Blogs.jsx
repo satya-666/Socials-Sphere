@@ -1,9 +1,37 @@
 import React, { useState } from 'react'
 import userImg from '../assets/Images/userImg.png';
+import noImg from '../assets/Images/noImg.png';
+
 import './Blogs.css'; 
 
-const Blogs = ({onBack}) => {
+const Blogs = ({onBack, onCreateBlog}) => {
   const [showForm, setShowForm] = useState(false);
+  const [image, setImage] = useState(null);
+  const [title, setTitle] = useState('');
+  const [content, setContent] = useState('');
+
+  const handelImageChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setImage(reader.result);
+      }
+      reader.readAsDataURL(e.target.files[0]);
+     }
+    };
+    const handelSunmit = (e) => {
+      e.preventDefault();
+      const newBlog = {
+        image: image || noImg,
+        title,
+        content
+      };
+      onCreateBlog(newBlog);
+      setImage(null);
+      setTitle('');
+      setContent('');
+      setShowForm(false);
+    }
   return (
     <div className='blogs'>
       <div className="blogs-left">
@@ -13,7 +41,7 @@ const Blogs = ({onBack}) => {
       {showForm ? (
         <div className="blogs-right-form">
         <h1>New Post</h1>
-        <form>
+        <form onSubmit={handelSunmit}>
           <div className="img-upload">
             <label 
             htmlFor="file-upload" 
@@ -21,13 +49,15 @@ const Blogs = ({onBack}) => {
             >
               <i className='bx bx-upload'>Upload Image</i>
             </label>
-            <input type="file" id='file-upload'/>
+            <input type="file" id='file-upload' onChange={handelImageChange}/>
           </div>
           <input type="text"
           placeholder='Add Title (Max 60 Chracters)'
           className='title-input'
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
            />
-          <textarea className='text-input' placeholder='Add Text'></textarea>
+          <textarea className='text-input' placeholder='Add Text' value={content} onChange={(e) => setContent(e.target.value)}></textarea>
           <button type='submit' className='submit-btn'>Submit Button
           </button>
         </form>

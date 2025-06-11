@@ -212,6 +212,75 @@
     height: 100%;
     background-color: #111214;
     border-radius: 1rem;
+    display: flex;
+    flex-direction: column;
+    row-gap: 3rem;
+    padding-bottom: 2rem;
+}
+.my-blogs-heading{
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3rem;
+    color: #ddd;
+    letter-spacing: .1rem;
+    padding: 2rem;
+}
+.blog-posts{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 1.2rem;
+    padding: 1.2rem;
+}
+.blog-post{
+    flex: 0 1 calc(50% - 0.6rem);
+    border-radius: 1rem;
+    position: relative;
+}
+.blog-post img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 1rem;
+    opacity: 0.5;
+
+}
+.blog-post h3 {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    padding: 1rem;
+    background-color: rgba(0,0,0,0.7);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 300;
+    line-height: 1.6rem;
+    width: 100%;
+    border-radius: 0 0 1rem 1rem;
+    color: #fff;
+    text-transform: uppercase;
+    overflow-wrap: break-word;
+}
+.post-button{
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    display: flex;
+    justify-content: center;
+    column-gap: 2rem;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s;
+}
+.blog-post:hover .post-button {
+    opacity: 1;
+    visibility: visible;
+}
+.post-button button {
+    background-color: transparent;
+    border: none;
+    color: #fff;
+    font-size: 2.5rem;
+    cursor: pointer;
 }
 .weather-clander{
     flex: 1;
