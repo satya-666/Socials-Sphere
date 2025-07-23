@@ -9,18 +9,48 @@ const Blogs = ({onBack, onCreateBlog}) => {
   const [image, setImage] = useState(null);
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
+  const [submitted, setSubmitted] = useState(false); 
+  const [titleValid, setTitleValid] = useState(true)
+  const [contentValid, setContentValid] = useState(true)
 
   const handelImageChange = (e) => {
     if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0]
+
+      const maxSize = 1 * 1024 * 1024
+
+      if (file.size > maxSize) {
+        alert('File Size exceed 1MB')
+        return
+      }
+
       const reader = new FileReader();
       reader.onload = () => {
         setImage(reader.result);
       }
-      reader.readAsDataURL(e.target.files[0]);
+      reader.readAsDataURL(file);
      }
     };
+
+    const handelTitleChange = (e) => {
+      setTitle(e.target.value)
+      setTitleValid(true)
+    }
+
+    const handelContentChange = (e) => {
+      setContent(e.target.value)
+      setContentValid(true)
+    }
+
     const handelSunmit = (e) => {
       e.preventDefault();
+
+      if (!title || !content){
+        if(!title)setTitleValid(false)
+        if(!content)setContentValid(false)
+        return
+      }
+
       const newBlog = {
         image: image || noImg,
         title,
@@ -31,6 +61,11 @@ const Blogs = ({onBack, onCreateBlog}) => {
       setTitle('');
       setContent('');
       setShowForm(false);
+      setSubmitted(true);
+      setTimeout(() => {
+        setSubmitted(false)
+        onBack()
+      },2000)
     }
   return (
     <div className='blogs'>
@@ -38,8 +73,13 @@ const Blogs = ({onBack, onCreateBlog}) => {
       <img src={userImg} alt="User Image" />
     </div>
     <div className="blogs-right">
-      {showForm ? (
-        <div className="blogs-right-form">
+        {!showForm && !submitted && (
+          <button className="post-btn" onClick={() => setShowForm(true)}>
+          Create New Post
+          </button>
+        )}
+        {submitted && <p className='submission-message'>Post Sunbmitted</p>}
+        <div className={`blogs-right-form ${showForm ? 'visible' : 'hidden'}`}>
         <h1>New Post</h1>
         <form onSubmit={handelSunmit}>
           <div className="img-upload">
@@ -53,19 +93,22 @@ const Blogs = ({onBack, onCreateBlog}) => {
           </div>
           <input type="text"
           placeholder='Add Title (Max 60 Chracters)'
-          className='title-input'
+          className={`title-input ${!titleValid ? 'invalid' : ''}`}
           value={title}
-          onChange={(e) => setTitle(e.target.value)}
+          onChange={handelTitleChange}
+          maxLength={60}
            />
-          <textarea className='text-input' placeholder='Add Text' value={content} onChange={(e) => setContent(e.target.value)}></textarea>
-          <button type='submit' className='submit-btn'>Submit Button
+          <textarea className={`text-input ${!contentValid ? 'invalid' : ''}`} placeholder='Add Text' value={content} 
+          onChange={handelContentChange}
+          ></textarea>
+          <button type='submit' 
+          className='submit-btn'>
+            Submit Button
           </button>
         </form>
       </div>
-      ) : (
-        <button className="post-btn" onClick={() => setShowForm(true)}>
-        Create New Post
-        </button>)}
+
+
       
      
       <button className="blogs-close-btn" onClick={onBack}>Back

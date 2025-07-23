@@ -44,11 +44,22 @@
 .post-btn:active{
     transform: translateY(0.2rem);
 }
-.blogs-right-form{
+.submission-message{
+    font-size: 6rem;
+    text-transform: uppercase;
+    background: linear-gradient(to right, #b88efc,#6877f4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+
+}
+.blogs-right-form.visible {
     display: flex;
     flex-direction: column;
     align-items: center;
     row-gap: 5rem;
+}
+.blogs-right-form.hidden {
+    display: none;
 }
 .blogs-right-form h1 {
     font-family: 'Comfortaa', sans-serif;
@@ -91,6 +102,14 @@
     aspect-ratio: 5 / 3;
     resize: none;
 }
+.text-input::-webkit-scrollbar{
+    display: none;
+}
+.title-input.invalid,
+.title-input.invalid{
+    border-bottom: 0.1rem solid #c4143a;
+}
+
 .title-input ::placeholder,
 .text-input ::placeholder {
     font-family: 'Comfortaa', sans-serif;
@@ -104,6 +123,10 @@
 .title-input:focus::placeholder,
 .text-input:focus::placeholder{
     color: transparent;
+}
+.title-input.invalid::placeholder,
+.title-input.invalid::placeholder{
+    color :#c4143a;
 }
 .submit-btn{
     height: 5rem;
