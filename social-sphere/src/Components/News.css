@@ -322,3 +322,138 @@
     transform: scale(1.2);
   }
   
+  @media(max-width: 1400px){
+    .nav-links {
+        row-gap: 1rem;
+    }
+    
+    .news-section{
+        overflow: hidden;
+    }
+    .news-grid {
+        grid-template-columns: repeat(2,1fr);
+        grid-template-rows: repeat(3,1fr);
+        overflow-y: none;
+    }
+    .news-grid::-webkit-scrollbar {
+        display: none;
+    }
+    .blog-posts {
+        overflow-y: scroll;
+    }
+    .blog-posts::-webkit-scrollbar {
+        display: none;
+    }
+    .blog-post {
+        flex: 0 1 calc(100% - 0.6rem);
+    }
+  }
+  @media(max-width: 1024px){
+    .news-grid {
+        grid-template-columns: repeat(1,1fr);
+        grid-template-rows: repeat(6,1fr);
+        overflow-y: none;
+    }
+  }
+  @media(max-width: 900px){
+    .news {
+        height: 100%;
+        overflow-y: none;
+    }
+    .news::-webkit-scrollbar{
+        display: none;
+    }
+    .news-content{
+        flex-direction: column;
+        width: 100%;
+        height: auto;
+        row-gap: 2rem;
+    }
+    .navbar{
+        flex-direction: row;
+        justify-content: space-between;
+        width: 100%;
+        height: 18rem;
+    }
+    .user{
+        width: calc(30%-2rem);
+        height: 100%;
+    }
+    .categories{
+        width: 70%;
+        height: 100%;
+        justify-content: center;
+        row-gap: 1rem;
+    }
+    .nav-links{
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    .nav-link{
+        margin-right: 2rem;
+    }
+    .news-section{
+        width: 100%;
+    }
+    .news-grid{
+        grid-template-columns: repeat(3,1fr);
+        grid-template-rows: repeat(2,1fr);
+        overflow-y: none;
+    }
+    .my-blogs{
+        width: 100%;
+    }
+    .blog-post{
+        flex: 0 1 calc(50% - 0.6rem);
+    }
+    .weather-clander{
+        flex-direction: row;
+        column-gap: 2rem;
+    }
+}
+@media(max-width: 500px){
+    .news-header{
+        padding: 0 2rem;
+    }
+    .logo{
+        font-size: 3rem;
+    }
+    .search-bar input {
+        width: 20rem;
+    }
+    .search-bar input:focus {
+        width: 20rem;
+    }
+    .navbar{
+        flex-direction: column;
+        height: 25rem;
+        margin-bottom: 2rem;
+    }   
+    .user{
+        width: 100%;
+        min-height: 40%;
+    }
+    .user p{
+        display: none;
+    }
+    .categories{
+        width: 100%;
+    }
+    .nav-heading{
+        display: none;
+    }
+    .news-grid {
+        grid-template-columns: repeat(2,1fr);
+        grid-template-rows: repeat(3,1fr);
+    }
+    .weather-clander{
+        flex-direction: column;
+    }
+    .news-footer{
+       min-height: 8rem; 
+       flex-direction: column;
+       justify-content: center;
+       row-gap: 1rem;
+    }
+}
