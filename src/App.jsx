@@ -1,36 +1,59 @@
 import React, { useEffect, useState } from 'react';
-import News from './Components/News'
-import Blogs from './Components/Blogs'
-import './index.css'; 
-import '@fortawesome/fontawesome-free/css/all.min.css';
+import News from './Components/News';
+import Blogs from './Components/Blogs';
+import './index.css';
+import { onAuthStateChanged } from 'firebase/auth'; // 🔄 fixed
+import { auth } from './firebase';
+import SignedIn from './Components/signedin';
+import SignedOut from './Components/signedout';
+import Login from './Components/login';
+
 const App = () => {
-  const [showNews, setShowNews] = React.useState(true);
-  const [showBlogs, setShowBlogs] = React.useState(false);
+  const [showNews, setShowNews] = useState(true);
+  const [showBlogs, setShowBlogs] = useState(false);
   const [blogs, setBlogs] = useState([]);
   const [selectPost, setSelectPost] = useState(null);
-  const[isEditing, setIsEditing] = useState(false);
-  useEffect(() => {
-    const savedBlogs = JSON.parse(localStorage.getItem('blogs')) || []
-    setBlogs(savedBlogs)
-  },[])
+  const [isEditing, setIsEditing] = useState(false);
+  const [user, setUser] = useState(null); // ✅ Add this
 
-  const handeleCreateBlog = (newBlog, isEdit,) => {
+  // Load blogs from localStorage
+  useEffect(() => {
+    const savedBlogs = JSON.parse(localStorage.getItem('blogs')) || [];
+    setBlogs(savedBlogs);
+  }, []);
+
+  // Handle auth state
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  // Handle blog create/update
+  const handleCreateBlog = (newBlog, isEdit) => {
     setBlogs((prevBlogs) => {
-      const updatedBlogs = isEdit ? prevBlogs.map((blog) =>(blog === selectPost ? newBlog : blog)) : [...prevBlogs, newBlog]
-      localStorage.setItem('blogs',JSON.stringify(updatedBlogs))
-      return updatedBlogs
+      const updatedBlogs = isEdit
+        ? prevBlogs.map((blog) => (blog === selectPost ? newBlog : blog))
+        : [...prevBlogs, newBlog];
+
+      localStorage.setItem('blogs', JSON.stringify(updatedBlogs));
+      return updatedBlogs;
     });
     setIsEditing(false);
     setSelectPost(null);
-  }
+  };
+
+  // Handle blog edit
   const handleEditBlog = (blog) => {
     setSelectPost(blog);
     setIsEditing(true);
     setShowBlogs(true);
     setShowNews(false);
-  }
+  };
 
-  const handelDeleteBlog = (blogToDelete) => {
+  // Handle blog delete
+  const handleDeleteBlog = (blogToDelete) => {
     setBlogs((prevBlogs) => {
       const updatedBlogs = prevBlogs.filter((blog) => blog !== blogToDelete);
       localStorage.setItem('blogs', JSON.stringify(updatedBlogs));
@@ -38,36 +61,49 @@ const App = () => {
     });
   };
 
+  // Navigation
   const handleShowBlogs = () => {
     setShowNews(false);
     setShowBlogs(true);
-  }
+  };
+
   const handleBackToNews = () => {
     setShowNews(true);
     setShowBlogs(false);
     setIsEditing(false);
     setSelectPost(null);
-  }
-  return (
-    <div className='container'>
-      <div className="social-sphere-app">
-        {showNews && 
-        <News 
-        onShowBlogs={handleShowBlogs} 
-        blogs={blogs}
-        onEditBlog={handleEditBlog} 
-        onDeleteBlog={handelDeleteBlog}
-        />}
-        {showBlogs && 
-        <Blogs 
-        onBack={handleBackToNews} 
-        onCreateBlog={handeleCreateBlog}
-        editPost={selectPost} 
-        isEditing={isEditing}
-        />}
-      </div>
-    </div>
-  )
-}
+  };
 
-export default App
+  return (
+    <>
+      <SignedIn>
+        <div className='container'>
+          <div className='social-sphere-app'>
+            {showNews && (
+              <News
+                onShowBlogs={handleShowBlogs}
+                blogs={blogs}
+                onEditBlog={handleEditBlog}
+                onDeleteBlog={handleDeleteBlog}
+              />
+            )}
+            {showBlogs && (
+              <Blogs
+                onBack={handleBackToNews}
+                onCreateBlog={handleCreateBlog}
+                editPost={selectPost}
+                isEditing={isEditing}
+              />
+            )}
+          </div>
+        </div>
+      </SignedIn>
+
+      <SignedOut>
+        <Login />
+      </SignedOut>
+    </>
+  );
+};
+
+export default App;

@@ -9,6 +9,8 @@ import axios from 'axios';
 import NewsModal from './NewsModal';
 import Bookmarks from './Bookmarks';
 import BlogsModal from './BlogsModal';
+import { useAuth } from "./authcontext";
+
 
 const API_KEY = 'cf67774cafc54591939708d2a2ae9885';
 
@@ -26,6 +28,7 @@ const categories = [
 
 const News = ({onShowBlogs, blogs, onEditBlog, onDeleteBlog}) => {
   const [headline, setHeadline] = useState(null);
+  const { logout, user } = useAuth();
   const [news, setNews] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('general');
   const [searchInput, setSearchInput] = useState('');
@@ -83,6 +86,7 @@ const News = ({onShowBlogs, blogs, onEditBlog, onDeleteBlog}) => {
     setSearchQuery('');
   };
 
+
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     setSearchQuery(searchInput);
@@ -135,13 +139,28 @@ const News = ({onShowBlogs, blogs, onEditBlog, onDeleteBlog}) => {
             </button>
           </form>
         </div>
+        <button
+        onClick={logout}
+          style={{
+            borderRadius: '10px',
+            padding: '5px',
+            backgroundColor: 'black',
+            color: 'white',
+            cursor: 'pointer'
+          }}
+        >
+          Logout
+        </button>
+
+
       </header>
 
       <div className="news-content">
         <div className="navbar">
           <div className="user" onClick={onShowBlogs}>
             <img src={userImg} alt="User" />
-            <p>Satya's Blog</p>
+            <p>{user?.displayName}</p>
+
           </div>
           <nav className='categories'>
             <h1 className="nav-heading">Categories</h1>
