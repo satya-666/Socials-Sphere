@@ -339,7 +339,7 @@
         display: none;
     }
     .blog-posts {
-        overflow-y: scroll;
+        overflow-y: none;
     }
     .blog-posts::-webkit-scrollbar {
         display: none;
