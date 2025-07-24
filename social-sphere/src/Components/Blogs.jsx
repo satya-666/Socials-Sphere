@@ -15,6 +15,7 @@ const Blogs = ({onBack, onCreateBlog}) => {
 
   const handelImageChange = (e) => {
     if (e.target.files && e.target.files[0]) {
+      
       const file = e.target.files[0]
 
       const maxSize = 1 * 1024 * 1024
