@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
+import { useEffect } from 'react';
 import userImg from '../assets/Images/userImg.png';
 import noImg from '../assets/Images/noImg.png';
-
 import './Blogs.css'; 
 
-const Blogs = ({onBack, onCreateBlog}) => {
+const Blogs = ({onBack, onCreateBlog, editPost, isEditing }) => {
   const [showForm, setShowForm] = useState(false);
   const [image, setImage] = useState(null);
   const [title, setTitle] = useState('');
@@ -13,9 +13,24 @@ const Blogs = ({onBack, onCreateBlog}) => {
   const [titleValid, setTitleValid] = useState(true)
   const [contentValid, setContentValid] = useState(true)
 
+  useEffect(() => {
+    if (isEditing && editPost) {
+      setImage(editPost.image);
+      setTitle(editPost.title);
+      setContent(editPost.content);
+      setShowForm(true); // 👈 This line is essential for showing the form
+    } else {
+      setImage(null);
+      setTitle('');
+      setContent('');
+      setShowForm(false);
+    }
+  }, [isEditing, editPost]);
+  
+
   const handelImageChange = (e) => {
     if (e.target.files && e.target.files[0]) {
-      
+
       const file = e.target.files[0]
 
       const maxSize = 1 * 1024 * 1024
@@ -57,7 +72,7 @@ const Blogs = ({onBack, onCreateBlog}) => {
         title,
         content
       };
-      onCreateBlog(newBlog);
+      onCreateBlog(newBlog, isEditing);
       setImage(null);
       setTitle('');
       setContent('');
@@ -81,7 +96,7 @@ const Blogs = ({onBack, onCreateBlog}) => {
         )}
         {submitted && <p className='submission-message'>Post Sunbmitted</p>}
         <div className={`blogs-right-form ${showForm ? 'visible' : 'hidden'}`}>
-        <h1>New Post</h1>
+        <h1>{isEditing ? 'Edit Post' : 'New Post'}</h1>
         <form onSubmit={handelSunmit}>
           <div className="img-upload">
             <label 
@@ -105,7 +120,7 @@ const Blogs = ({onBack, onCreateBlog}) => {
           ></textarea>
           <button type='submit' 
           className='submit-btn'>
-            Submit Button
+            {isEditing ? 'Update Post' : 'Submit Post'}
           </button>
         </form>
       </div>

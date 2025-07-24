@@ -4,7 +4,7 @@ import Clander from './Clander';
 import './News.css';
 import './NewsModal.css';
 import userImg from '../assets/Images/userImg.png';
-import noImg from '../assets/Images/noImg.png';
+import noImg from '../assets/Images/noImg.png'; 
 import axios from 'axios';
 import NewsModal from './NewsModal';
 import Bookmarks from './Bookmarks';
@@ -24,7 +24,7 @@ const categories = [
   'nation'
 ];
 
-const News = ({onShowBlogs, blogs}) => {
+const News = ({onShowBlogs, blogs, onEditBlog, onDeleteBlog}) => {
   const [headline, setHeadline] = useState(null);
   const [news, setNews] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('general');
@@ -233,12 +233,20 @@ const News = ({onShowBlogs, blogs}) => {
                 <h3>{blog.title}</h3>
                 {/* <p>{blog.content}</p> */}
                 <div className="post-button">
-                  <button className="edit-post">
+                  <button className="edit-post" onClick={() => onEditBlog(blog)}>
                     <i className='bx bxs-edit'></i>
                   </button>
-                  <button className="delete-post">
+                  <button
+                    className="delete-post"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      onDeleteBlog(blog);
+                    }}
+                  >
                     <i className='bx bxs-x-circle'></i>
                   </button>
+
                 </div>
               </div>
             ))}
