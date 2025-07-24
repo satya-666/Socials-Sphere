@@ -12,6 +12,7 @@ import blogimg4 from '../assets/Images/blogimg4.webp';
 import axios from 'axios';
 import NewsModal from './NewsModal';
 import Bookmarks from './Bookmarks';
+import BlogsModal from './BlogsModal';
 
 const API_KEY = 'cf67774cafc54591939708d2a2ae9885';
 
@@ -37,7 +38,8 @@ const News = ({onShowBlogs, blogs}) => {
   const [selectedArticle, setSelectedArticle] = useState(null);
   const [bookmarks, setBookmarks] = useState([]);
   const [showBookmarks, setShowBookmarks] = useState(false);
-
+  const [selectedPost, setSelectedPost] = useState(null);
+  const [showBlogModal, setShowBlogModal] = useState(false);
   // Load bookmarks from localStorage on mount
   useEffect(() => {
     const savedBookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
@@ -110,6 +112,15 @@ const News = ({onShowBlogs, blogs}) => {
       return updatedBookmarks;
     });
   };
+
+  const handelBlogClick = (blog) => {
+    setSelectedPost(blog);
+    setShowBlogModal(true);
+  };
+  const closeBlogModal = () => {
+    setShowBlogModal(false); 
+    setSelectedPost(null); 
+  }
 
   return (
     <div className='news'>
@@ -221,7 +232,7 @@ const News = ({onShowBlogs, blogs}) => {
           <h1 className="my-blogs-heading">My Blogs</h1>
           <div className="blog-posts">
             {blogs.map((blog, index) => (
-              <div className="blog-post" key={index}>
+              <div className="blog-post" onClick={()=> handelBlogClick(blog)} key={index}>
                 <img src={blog.image || noImg} alt={blog.title} />
                 <h3>{blog.title}</h3>
                 {/* <p>{blog.content}</p> */}
@@ -237,6 +248,10 @@ const News = ({onShowBlogs, blogs}) => {
             ))}
             
           </div>
+          {selectedPost && showBlogModal && (
+            <BlogsModal show={showBlogModal} blog={selectedPost} onClose={closeBlogModal}/>
+          )}
+          
         </div>
         <div className="weather-clander">
           <Weather />

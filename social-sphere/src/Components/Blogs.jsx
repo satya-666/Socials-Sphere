@@ -98,7 +98,8 @@ const Blogs = ({onBack, onCreateBlog}) => {
           onChange={handelTitleChange}
           maxLength={60}
            />
-          <textarea className={`text-input ${!contentValid ? 'invalid' : ''}`} placeholder='Add Text' value={content} 
+          <textarea className={`text-input ${!contentValid ? 'invalid' : ''}`} placeholder='Add Text'
+          value={content} 
           onChange={handelContentChange}
           ></textarea>
           <button type='submit' 
