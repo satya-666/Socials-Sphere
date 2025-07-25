@@ -94,7 +94,7 @@ const Blogs = ({onBack, onCreateBlog, editPost, isEditing }) => {
           Create New Post
           </button>
         )}
-        {submitted && <p className='submission-message'>Post Submitted</p>}
+        {submitted && <p className='submission-message'>Submitted</p>}
         <div className={`blogs-right-form ${showForm ? 'visible' : 'hidden'}`}>
         <h1>{isEditing ? 'Edit Post' : 'New Post'}</h1>
         <form onSubmit={handelSunmit}>
