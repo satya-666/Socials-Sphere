@@ -18,7 +18,7 @@ const Blogs = ({onBack, onCreateBlog, editPost, isEditing }) => {
       setImage(editPost.image);
       setTitle(editPost.title);
       setContent(editPost.content);
-      setShowForm(true); // 👈 This line is essential for showing the form
+      setShowForm(true);
     } else {
       setImage(null);
       setTitle('');
@@ -94,7 +94,7 @@ const Blogs = ({onBack, onCreateBlog, editPost, isEditing }) => {
           Create New Post
           </button>
         )}
-        {submitted && <p className='submission-message'>Post Sunbmitted</p>}
+        {submitted && <p className='submission-message'>Post Submit</p>}
         <div className={`blogs-right-form ${showForm ? 'visible' : 'hidden'}`}>
         <h1>{isEditing ? 'Edit Post' : 'New Post'}</h1>
         <form onSubmit={handelSunmit}>
