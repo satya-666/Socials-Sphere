@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import News from './Components/News';
 import Blogs from './Components/Blogs';
 import './index.css';
-import { onAuthStateChanged } from 'firebase/auth'; // 🔄 fixed
+import { onAuthStateChanged } from 'firebase/auth'; 
 import { auth } from './firebase';
 import SignedIn from './Components/signedin';
 import SignedOut from './Components/signedout';
@@ -14,15 +14,14 @@ const App = () => {
   const [blogs, setBlogs] = useState([]);
   const [selectPost, setSelectPost] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [user, setUser] = useState(null); // ✅ Add this
+  const [user, setUser] = useState(null); 
 
-  // Load blogs from localStorage
   useEffect(() => {
     const savedBlogs = JSON.parse(localStorage.getItem('blogs')) || [];
     setBlogs(savedBlogs);
   }, []);
 
-  // Handle auth state
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
@@ -30,7 +29,7 @@ const App = () => {
     return () => unsubscribe();
   }, []);
 
-  // Handle blog create/update
+
   const handleCreateBlog = (newBlog, isEdit) => {
     setBlogs((prevBlogs) => {
       const updatedBlogs = isEdit
@@ -44,7 +43,7 @@ const App = () => {
     setSelectPost(null);
   };
 
-  // Handle blog edit
+
   const handleEditBlog = (blog) => {
     setSelectPost(blog);
     setIsEditing(true);
@@ -52,7 +51,6 @@ const App = () => {
     setShowNews(false);
   };
 
-  // Handle blog delete
   const handleDeleteBlog = (blogToDelete) => {
     setBlogs((prevBlogs) => {
       const updatedBlogs = prevBlogs.filter((blog) => blog !== blogToDelete);
@@ -61,7 +59,6 @@ const App = () => {
     });
   };
 
-  // Navigation
   const handleShowBlogs = () => {
     setShowNews(false);
     setShowBlogs(true);

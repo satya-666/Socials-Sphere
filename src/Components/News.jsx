@@ -293,3 +293,5 @@ const News = ({onShowBlogs, blogs, onEditBlog, onDeleteBlog}) => {
 };
 
 export default News;
+
+// noting to be add here
