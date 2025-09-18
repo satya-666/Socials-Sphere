@@ -4,29 +4,37 @@ import Clander from './Clander';
 import './News.css';
 import './NewsModal.css';
 import userImg from '../assets/Images/userImg.png';
-import noImg from '../assets/Images/noImg.png'; 
+import noImg from '../assets/Images/noImg.png';
 import axios from 'axios';
 import NewsModal from './NewsModal';
 import Bookmarks from './Bookmarks';
 import BlogsModal from './BlogsModal';
 import { useAuth } from "./authcontext";
 
-
-const API_KEY = 'cf67774cafc54591939708d2a2ae9885';
+const API_KEY = 'da1e10a00423e24726010658371a3ca1';
 
 const categories = [
   'general',
-  'world', // 'world' is handled via a custom domain query
   'business',
   'technology',
   'entertainment',
   'sports',
   'science',
   'health',
+  'world',
   'nation'
 ];
 
-const News = ({onShowBlogs, blogs, onEditBlog, onDeleteBlog}) => {
+// Available countries for dropdown
+const countries = [
+  { code: 'us', name: 'United States' },
+  { code: 'in', name: 'India' },
+  { code: 'gb', name: 'United Kingdom' },
+  { code: 'au', name: 'Australia' },
+  { code: 'ca', name: 'Canada' }
+];
+
+const News = ({ onShowBlogs, blogs, onEditBlog, onDeleteBlog }) => {
   const [headline, setHeadline] = useState(null);
   const { logout, user } = useAuth();
   const [news, setNews] = useState([]);
@@ -39,57 +47,72 @@ const News = ({onShowBlogs, blogs, onEditBlog, onDeleteBlog}) => {
   const [showBookmarks, setShowBookmarks] = useState(false);
   const [selectedPost, setSelectedPost] = useState(null);
   const [showBlogModal, setShowBlogModal] = useState(false);
-  // Load bookmarks from localStorage on mount
+
+  // Pagination
+  const [page, setPage] = useState(1);
+
+  // Country selection
+  const [country, setCountry] = useState('us');
+
+  // Load bookmarks from localStorage
   useEffect(() => {
     const savedBookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
     setBookmarks(savedBookmarks);
   }, []);
 
-  // Fetch news whenever category or search query changes
+  // Fetch news whenever category, search, country, or page changes
   useEffect(() => {
     const fetchNews = async () => {
-      let url = `https://newsapi.org/v2/top-headlines?country=us&apiKey=${API_KEY}`;
-
-      if (selectedCategory && selectedCategory !== 'world') {
-        url += `&category=${selectedCategory}`;
-      }
+      let url = '';
 
       if (searchQuery) {
-        url += `&q=${encodeURIComponent(searchQuery)}`;
-      }
-
-      if (selectedCategory === 'world') {
-        url = `https://newsapi.org/v2/everything?domains=wsj.com&apiKey=${API_KEY}`;
-        if (searchQuery) url += `&q=${encodeURIComponent(searchQuery)}`;
+        // Search endpoint
+        url = `https://gnews.io/api/v4/search?q=${encodeURIComponent(searchQuery)}&lang=en&country=${country}&max=10&page=${page}&apikey=${API_KEY}`;
+      } else if (selectedCategory === 'world') {
+        // World category
+        url = `https://gnews.io/api/v4/top-headlines?topic=world&lang=en&country=${country}&max=10&page=${page}&apikey=${API_KEY}`;
+      } else if (selectedCategory === 'nation') {
+        // Nation fallback → search by country keyword
+        url = `https://gnews.io/api/v4/search?q=${country}&lang=en&max=10&page=${page}&apikey=${API_KEY}`;
+      } else {
+        // Other categories
+        url = `https://gnews.io/api/v4/top-headlines?topic=${selectedCategory}&lang=en&country=${country}&max=10&page=${page}&apikey=${API_KEY}`;
       }
 
       try {
         const response = await axios.get(url);
-        const fetchedNews = response.data.articles.map(article => ({
+        const articles = response.data.articles.map(article => ({
           ...article,
-          urlToImage: article.urlToImage || noImg
+          image: article.image || noImg
         }));
 
-        setHeadline(fetchedNews[0]);
-        setNews(fetchedNews.slice(1, 7));
+        if (page === 1) {
+          // Reset on first page
+          setHeadline(articles[0] || null);
+          setNews(articles.slice(1, 7));
+        } else {
+          // Append for "Load More"
+          setNews(prev => [...prev, ...articles]);
+        }
       } catch (error) {
         console.error('Failed to fetch news:', error);
       }
     };
 
     fetchNews();
-  }, [selectedCategory, searchQuery]);
+  }, [selectedCategory, searchQuery, country, page]);
 
   const handleCategoryChange = (e, category) => {
     e.preventDefault();
     setSelectedCategory(category);
     setSearchQuery('');
+    setPage(1); // reset pagination
   };
-
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     setSearchQuery(searchInput);
+    setPage(1); // reset pagination
   };
 
   const handleArticleClick = (article) => {
@@ -117,10 +140,11 @@ const News = ({onShowBlogs, blogs, onEditBlog, onDeleteBlog}) => {
     setSelectedPost(blog);
     setShowBlogModal(true);
   };
+
   const closeBlogModal = () => {
-    setShowBlogModal(false); 
-    setSelectedPost(null); 
-  }
+    setShowBlogModal(false);
+    setSelectedPost(null);
+  };
 
   return (
     <div className='news'>
@@ -140,7 +164,7 @@ const News = ({onShowBlogs, blogs, onEditBlog, onDeleteBlog}) => {
           </form>
         </div>
         <button
-        onClick={logout}
+          onClick={logout}
           style={{
             borderRadius: '10px',
             padding: '5px',
@@ -151,8 +175,6 @@ const News = ({onShowBlogs, blogs, onEditBlog, onDeleteBlog}) => {
         >
           Logout
         </button>
-
-
       </header>
 
       <div className="news-content">
@@ -160,7 +182,6 @@ const News = ({onShowBlogs, blogs, onEditBlog, onDeleteBlog}) => {
           <div className="user" onClick={onShowBlogs}>
             <img src={userImg} alt="User" />
             <p>{user?.displayName}</p>
-
           </div>
           <nav className='categories'>
             <h1 className="nav-heading">Categories</h1>
@@ -179,13 +200,23 @@ const News = ({onShowBlogs, blogs, onEditBlog, onDeleteBlog}) => {
                 Bookmarks <i className="fa-solid fa-bookmark"></i>
               </a>
             </div>
+
+            {/* Country Dropdown */}
+            <div className="country-filter">
+              <h2 style={{ fontSize: "14px", marginTop: "15px" }}>Country</h2>
+              <select value={country} onChange={(e) => { setCountry(e.target.value); setPage(1); }}>
+                {countries.map(c => (
+                  <option key={c.code} value={c.code}>{c.name}</option>
+                ))}
+              </select>
+            </div>
           </nav>
         </div>
 
         <div className="news-section">
           {headline && (
             <div className="headline" onClick={() => handleArticleClick(headline)}>
-              <img src={headline.urlToImage} alt={headline.title} />
+              <img src={headline.image} alt={headline.title} />
               <h2 className="headline-title">
                 {headline.title}
                 <i
@@ -210,7 +241,7 @@ const News = ({onShowBlogs, blogs, onEditBlog, onDeleteBlog}) => {
                 className="news-grid-item"
                 onClick={() => handleArticleClick(article)}
               >
-                <img src={article.urlToImage} alt={article.title} />
+                <img src={article.image} alt={article.title} />
                 <h3>
                   {article.title}
                   <i
@@ -228,6 +259,24 @@ const News = ({onShowBlogs, blogs, onEditBlog, onDeleteBlog}) => {
               </div>
             ))}
           </div>
+
+          {/* Load More button */}
+          {news.length > 0 && (
+            <div style={{ textAlign: 'center', marginTop: '20px' }}>
+              <button
+                style={{
+                  padding: '10px 20px',
+                  borderRadius: '8px',
+                  backgroundColor: '#222',
+                  color: '#fff',
+                  cursor: 'pointer'
+                }}
+                onClick={() => setPage(prev => prev + 1)}
+              >
+                Load More
+              </button>
+            </div>
+          )}
         </div>
 
         <NewsModal
@@ -247,10 +296,9 @@ const News = ({onShowBlogs, blogs, onEditBlog, onDeleteBlog}) => {
           <h1 className="my-blogs-heading">My Blogs</h1>
           <div className="blog-posts">
             {blogs.map((blog, index) => (
-              <div className="blog-post" onClick={()=> handelBlogClick(blog)} key={index}>
+              <div className="blog-post" onClick={() => handelBlogClick(blog)} key={index}>
                 <img src={blog.image || noImg} alt={blog.title} />
                 <h3>{blog.title}</h3>
-                {/* <p>{blog.content}</p> */}
                 <div className="post-button">
                   <button className="edit-post" onClick={() => onEditBlog(blog)}>
                     <i className='bx bxs-edit'></i>
@@ -265,17 +313,15 @@ const News = ({onShowBlogs, blogs, onEditBlog, onDeleteBlog}) => {
                   >
                     <i className='bx bxs-x-circle'></i>
                   </button>
-
                 </div>
               </div>
             ))}
-            
           </div>
           {selectedPost && showBlogModal && (
-            <BlogsModal show={showBlogModal} blog={selectedPost} onClose={closeBlogModal}/>
+            <BlogsModal show={showBlogModal} blog={selectedPost} onClose={closeBlogModal} />
           )}
-          
         </div>
+
         <div className="weather-clander">
           <Weather />
           <Clander />
@@ -293,5 +339,3 @@ const News = ({onShowBlogs, blogs, onEditBlog, onDeleteBlog}) => {
 };
 
 export default News;
-
-// noting to be add here
