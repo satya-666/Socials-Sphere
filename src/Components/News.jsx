@@ -10,8 +10,10 @@ import NewsModal from './NewsModal';
 import Bookmarks from './Bookmarks';
 import BlogsModal from './BlogsModal';
 import { useAuth } from "./authcontext";
+import { staticNews } from './staticNews';
 
 const API_KEY = 'da1e10a00423e24726010658371a3ca1';
+
 
 const categories = [
   'general',
@@ -95,7 +97,14 @@ const News = ({ onShowBlogs, blogs, onEditBlog, onDeleteBlog }) => {
           setNews(prev => [...prev, ...articles]);
         }
       } catch (error) {
-        console.error('Failed to fetch news:', error);
+        console.error('Failed to fetch news, switching to static mode:', error);
+        // Fallback to static news
+        if (page === 1) {
+          setHeadline(staticNews[0]);
+          setNews(staticNews.slice(1));
+        }
+        // If page > 1, maybe just don't append anything or show a message? 
+        // For now, simpler to just load static on first page error.
       }
     };
 
@@ -220,11 +229,10 @@ const News = ({ onShowBlogs, blogs, onEditBlog, onDeleteBlog }) => {
               <h2 className="headline-title">
                 {headline.title}
                 <i
-                  className={`fa-bookmark bookmark-icon ${
-                    bookmarks.some((bookmark) => bookmark.title === headline.title)
-                      ? 'fa-solid'
-                      : 'fa-regular'
-                  }`}
+                  className={`fa-bookmark bookmark-icon ${bookmarks.some((bookmark) => bookmark.title === headline.title)
+                    ? 'fa-solid'
+                    : 'fa-regular'
+                    }`}
                   onClick={(e) => {
                     e.stopPropagation();
                     handleBookmarkClick(headline);
@@ -245,11 +253,10 @@ const News = ({ onShowBlogs, blogs, onEditBlog, onDeleteBlog }) => {
                 <h3>
                   {article.title}
                   <i
-                    className={`fa-bookmark bookmark-icon ${
-                      bookmarks.some((bookmark) => bookmark.title === article.title)
-                        ? 'fa-solid'
-                        : 'fa-regular'
-                    }`}
+                    className={`fa-bookmark bookmark-icon ${bookmarks.some((bookmark) => bookmark.title === article.title)
+                      ? 'fa-solid'
+                      : 'fa-regular'
+                      }`}
                     onClick={(e) => {
                       e.stopPropagation();
                       handleBookmarkClick(article);

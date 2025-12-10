@@ -358,10 +358,7 @@
   @media(max-width: 900px){
     .news {
         height: 100%;
-        overflow-y: none;
-    }
-    .news::-webkit-scrollbar{
-        display: none;
+        overflow-y: auto; /* Allow scrolling */
     }
     .news-content{
         flex-direction: column;
@@ -373,15 +370,17 @@
         flex-direction: row;
         justify-content: space-between;
         width: 100%;
-        height: 18rem;
+        height: auto; /* flexible height */
+        flex-wrap: wrap; /* allow wrapping */
+        padding-bottom: 2rem;
     }
     .user{
-        width: calc(30%-2rem);
-        height: 100%;
+        width: 100px;
+        height: auto;
     }
     .categories{
-        width: 70%;
-        height: 100%;
+        width: 100%; /* full width on mobile */
+        height: auto;
         justify-content: center;
         row-gap: 1rem;
     }
@@ -389,71 +388,53 @@
         flex-direction: row;
         flex-wrap: wrap;
         justify-content: center;
+        gap: 1rem;
     }
     .nav-link{
-        margin-right: 2rem;
+        margin-right: 0;
+        font-size: 1.2rem;
     }
     .news-section{
         width: 100%;
     }
     .news-grid{
-        grid-template-columns: repeat(3,1fr);
-        grid-template-rows: repeat(2,1fr);
-        overflow-y: none;
+        grid-template-columns: repeat(2,1fr); 
+        gap: 1rem;
+        height: auto; /* Allow growth */
+        overflow-y: visible;
+        display: grid;
     }
     .my-blogs{
         width: 100%;
     }
-    .blog-post{
-        flex: 0 1 calc(50% - 0.6rem);
-    }
     .weather-clander{
         flex-direction: row;
         column-gap: 2rem;
+        flex-wrap: wrap;
     }
 }
-@media(max-width: 500px){
-    .news-header{
-        padding: 0 2rem;
+
+@media(max-width: 600px){
+    .news-grid {
+        grid-template-columns: 1fr; /* Single column for mobile */
     }
-    .logo{
-        font-size: 3rem;
+    .headline-title {
+        font-size: 1.5rem;
+        padding: 1rem;
+    }
+     .news-header{
+        padding: 1rem;
+        flex-direction: column;
+        gap: 1rem;
     }
     .search-bar input {
-        width: 20rem;
+        width: 100%;
     }
     .search-bar input:focus {
-        width: 20rem;
-    }
-    .navbar{
-        flex-direction: column;
-        height: 25rem;
-        margin-bottom: 2rem;
-    }   
-    .user{
-        width: 100%;
-        min-height: 40%;
-    }
-    .user p{
-        display: none;
-    }
-    .categories{
         width: 100%;
     }
-    .nav-heading{
-        display: none;
-    }
-    .news-grid {
-        grid-template-columns: repeat(2,1fr);
-        grid-template-rows: repeat(3,1fr);
-    }
-    .weather-clander{
-        flex-direction: column;
-    }
-    .news-footer{
-       min-height: 8rem; 
-       flex-direction: column;
-       justify-content: center;
-       row-gap: 1rem;
+    
+    .logo {
+        font-size: 3rem;
     }
 }

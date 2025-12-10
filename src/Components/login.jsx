@@ -5,7 +5,7 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   updateProfile,
-  
+
 } from 'firebase/auth';
 import { auth, provider } from '../firebase';
 import './Login.css'; // External CSS file
@@ -15,7 +15,7 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [isSignUp, setIsSignUp] = useState(false);
   const [firstName, setFirstName] = useState('');
-    const [lastName, setLastName] = useState('');
+  const [lastName, setLastName] = useState('');
 
 
   const loginWithGoogle = async () => {
@@ -33,7 +33,7 @@ export default function Login() {
       console.log('Email login success:', result.user);
     } catch (error) {
       console.error('Email login error:', error);
-      alert('Login failed. Please check your credentials and try again.');
+      alert('Login failed: ' + error.message);
     }
   };
 
@@ -47,7 +47,7 @@ export default function Login() {
       console.log('Signup success with name:', result.user);
     } catch (error) {
       console.error('Signup error:', error);
-      alert('Signup failed. Please try again.');
+      alert('Signup failed: ' + error.message);
     }
   };
 
@@ -73,13 +73,13 @@ export default function Login() {
                 placeholder="First Name"
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
-                />
-                <input
+              />
+              <input
                 type="text"
                 placeholder="Last Name"
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
-                />
+              />
             </div>
           )}
 
